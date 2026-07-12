@@ -13,14 +13,20 @@ class Api::TransactionsController < ApplicationController
   end
 
   def create
+    if transaction_params.values.any?(&:blank?)
+      render json: { error: "All fields are required" }, status: :unprocessable_entity
+      return
+    end
+    
     statuses = ["Settled", "Pending", "Failed"]
     status = statuses.sample
+    formatted_amount = format("%.2f", transaction_params[:amount].to_f)
     
     row = [
       transaction_params[:transaction_date],
       transaction_params[:account_number],
       transaction_params[:account_holder_name],
-      transaction_params[:amount],
+      formatted_amount,
       status
     ]
 
@@ -32,7 +38,7 @@ class Api::TransactionsController < ApplicationController
       transaction_date: transaction_params[:transaction_date],
       account_number: transaction_params[:account_number],
       account_holder_name: transaction_params[:account_holder_name],
-      amount: transaction_params[:amount],
+      amount: formatted_amount,
       status: status
     }
 
