@@ -12,6 +12,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  root "transactions#index"
-  get "/transactions", to: "transactions#index"
+  # root "transactions#index"
+  namespace :api do
+    get "/transactions", to: "transactions#index"
+    post "/transactions", to: "transactions#create"
+  end
 end
